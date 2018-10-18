@@ -2,6 +2,7 @@ import csv
 import matplotlib.pyplot
 import math
 import operator
+import random
 
 
 def read_file(file_name):
@@ -57,24 +58,42 @@ def label_neighbor(neighbor_list, k):
     return score >= k//2+1
 
 
+def split_data(whole_data, training_set, test_set):
+    for row in whole_data:
+        if random.random() > 0.67:
+            test_set.append(row)
+        else:
+            training_set.append(row)
+
+
+def knn(data_set, k):
+    for row in data_set:
+        neighbors = find_neighbors(train_set, row, k)
+        label = label_neighbor(neighbors, k)
+        row.append(label)
+
+
 def accuracy(table):
     score = 0
     for row in table:
         if bool(row[2]) is row[3]:
             score += 1
-    print(score/len(table))
+    return score/len(table)
 
 
 if __name__ == "__main__":
-    # TODO Run for 50 epochs
-    # TODO Split data into two sets
-    data = read_file("data.csv")
-    convert_data(data)
-    # plot_data(data)
-    k_parameter = 3
-    # Find neighbors, find the score, and assign label based on score
-    for row in data:
-        neighbors = find_neighbors(data, row, k_parameter)
-        label = label_neighbor(neighbors, k_parameter)
-        row.append(label)
-    accuracy(data)
+    # TODO Plotting
+    # TODO Fix appending bug with data/find more int
+    accuracy_per_epoch = []
+    k_parameter = 5
+    for x in range(50):
+        data = read_file("data.csv")
+        convert_data(data)
+        train_set = []
+        test_set = []
+        split_data(data, train_set, test_set)
+        # plot_data(data)
+        knn(test_set, k_parameter)
+        knn(train_set, k_parameter)
+        accuracy_per_epoch.append([accuracy(test_set), accuracy(train_set)])
+    print("hello")
